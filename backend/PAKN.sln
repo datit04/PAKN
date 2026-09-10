@@ -1,0 +1,36 @@
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31903.59
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PAKN.Domain", "src\Core\PAKN.Domain\PAKN.Domain.csproj", "{3B011D7F-83FE-49A1-A0E0-46603F2D4056}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PAKN.Application", "src\Core\PAKN.Application\PAKN.Application.csproj", "{D1893D22-C807-4C0A-BFE0-1E1C598C49DE}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PAKN.Infrastructure", "src\Infrastructure\PAKN.Infrastructure\PAKN.Infrastructure.csproj", "{5ACFDCBC-15C0-46F2-817C-BAA94B4E8751}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PAKN.WebAPI", "src\Presentation\PAKN.WebAPI\PAKN.WebAPI.csproj", "{22A5E072-525A-4ED0-8B90-E5779B0B746E}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{3B011D7F-83FE-49A1-A0E0-46603F2D4056}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3B011D7F-83FE-49A1-A0E0-46603F2D4056}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3B011D7F-83FE-49A1-A0E0-46603F2D4056}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3B011D7F-83FE-49A1-A0E0-46603F2D4056}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D1893D22-C807-4C0A-BFE0-1E1C598C49DE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D1893D22-C807-4C0A-BFE0-1E1C598C49DE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D1893D22-C807-4C0A-BFE0-1E1C598C49DE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D1893D22-C807-4C0A-BFE0-1E1C598C49DE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5ACFDCBC-15C0-46F2-817C-BAA94B4E8751}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5ACFDCBC-15C0-46F2-817C-BAA94B4E8751}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5ACFDCBC-15C0-46F2-817C-BAA94B4E8751}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5ACFDCBC-15C0-46F2-817C-BAA94B4E8751}.Release|Any CPU.Build.0 = Release|Any CPU
+		{22A5E072-525A-4ED0-8B90-E5779B0B746E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{22A5E072-525A-4ED0-8B90-E5779B0B746E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{22A5E072-525A-4ED0-8B90-E5779B0B746E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{22A5E072-525A-4ED0-8B90-E5779B0B746E}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
