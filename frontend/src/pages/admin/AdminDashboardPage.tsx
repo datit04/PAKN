@@ -167,7 +167,7 @@ export const AdminDashboardPage: React.FC = () => {
             {tieuDe}
           </div>
           <div style={{ fontSize: 12, color: '#6b7280' }}>
-            Người gửi: {record.nguoiGui.hoTen || record.nguoiGui.tenDoanhNghiep || record.nguoiGui.tenToChuc} 
+            Người gửi: {record.nguoiGui.hoTen || record.nguoiGui.tenDoanhNghiep || record.nguoiGui.tenToChuc}
           </div>
         </div>
       )
@@ -231,7 +231,7 @@ export const AdminDashboardPage: React.FC = () => {
       <Card style={{ borderRadius: 12 }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
           <div>
-            <Title level={2} style={{ margin: 0, color: '#1e3a8a' }}>Bàn Làm Việc Cán Bộ Thụ Lý</Title>
+            <Title level={2} style={{ margin: 0, color: '#1e3a8a' }}>Bàn Làm Việc</Title>
           </div>
           <Button icon={<ReloadOutlined />} onClick={fetchData}>Làm mới</Button>
         </div>
@@ -247,10 +247,10 @@ export const AdminDashboardPage: React.FC = () => {
           </Radio.Group>
         </div>
 
-        <Table 
-          columns={columns} 
-          dataSource={data} 
-          rowKey="id" 
+        <Table
+          columns={columns}
+          dataSource={data}
+          rowKey="id"
           loading={loading}
           pagination={{ pageSize: 8 }}
         />
@@ -265,7 +265,7 @@ export const AdminDashboardPage: React.FC = () => {
       >
         <Form form={formPhanCong} layout="vertical" onFinish={handlePhanCongSubmit}>
           <Form.Item name="donViId" label="Phòng ban / Đơn vị thụ lý chính" rules={[{ required: true, message: 'Vui lòng chọn đơn vị!' }]}>
-            <Select 
+            <Select
               placeholder="Chọn cơ quan/đơn vị thụ lý"
               options={donViList.map(d => ({ value: d.id, label: d.tenDonVi }))}
             />
