@@ -12,6 +12,7 @@ namespace PAKN.Domain.Entities
         public long NguoiGuiId { get; set; }
 
         public int? ChuDeId { get; set; }
+        public int? LinhVucId { get; set; }
         public string TieuDe { get; set; } = string.Empty;
         public string NoiDung { get; set; } = string.Empty;
 
@@ -35,6 +36,7 @@ namespace PAKN.Domain.Entities
         public NguoiGui? NguoiGui { get; set; }
         public DonVi? DonViTiepNhan { get; set; }
         public ChuDePAKN? ChuDe { get; set; }
+        public LinhVucPAKN? LinhVuc { get; set; }
 
         public ICollection<PAKN_File> Files { get; set; } = new List<PAKN_File>();
         public ICollection<PAKN_PhanCong> DanhSachPhanCong { get; set; } = new List<PAKN_PhanCong>();

@@ -32,6 +32,7 @@ namespace PAKN.Application.DTOs
         public NguoiGuiDto NguoiGui { get; set; } = new();
 
         public int? ChuDeId { get; set; }
+        public int? LinhVucId { get; set; }
         public string TieuDe { get; set; } = string.Empty;
         public string NoiDung { get; set; } = string.Empty;
         public long DonViTiepNhanId { get; set; }
@@ -93,6 +94,7 @@ namespace PAKN.Application.DTOs
 
         public string TenDonViTiepNhan { get; set; } = string.Empty;
         public string? TenChuDe { get; set; }
+        public string? TenLinhVuc { get; set; }
 
         public NguoiGuiDto NguoiGui { get; set; } = new();
         public List<FileAttachmentDto> Files { get; set; } = new();
@@ -112,6 +114,27 @@ namespace PAKN.Application.DTOs
         public DateTime NgayGui { get; set; }
         public string? CauTraLoiMoiNhat { get; set; }
         public DateTime? NgayTraLoi { get; set; }
+    }
+
+    public class ThongKeTrangThaiDto
+    {
+        public TrangThaiPAKN TrangThai { get; set; }
+        public int SoLuong { get; set; }
+    }
+
+    public class ThongKeTopDonViDto
+    {
+        public long DonViId { get; set; }
+        public string TenDonVi { get; set; } = string.Empty;
+        public int SoLuong { get; set; }
+    }
+
+    public class ThongKeAdminDto
+    {
+        public int TongSo { get; set; }
+        public List<ThongKeTrangThaiDto> TheoTrangThai { get; set; } = new();
+        public int QuaHan { get; set; }
+        public List<ThongKeTopDonViDto> TopDonViDangXuLy { get; set; } = new();
     }
 
     public class DanhGiaRequest

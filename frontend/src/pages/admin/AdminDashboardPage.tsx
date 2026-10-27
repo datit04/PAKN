@@ -1,29 +1,29 @@
 import React, { useState, useEffect } from 'react';
-import { 
-  Table, 
-  Card, 
-  Tag, 
-  Button, 
-  Space, 
-  Modal, 
-  Form, 
-  Input, 
-  Select, 
-  Typography, 
-  Radio, 
-  Upload 
+import {
+  Table,
+  Card,
+  Tag,
+  Button,
+  Space,
+  Modal,
+  Form,
+  Input,
+  Select,
+  Typography,
+  Radio,
+  Upload
 } from 'antd';
-import { 
-  CheckOutlined, 
-  UserSwitchOutlined, 
-  FormOutlined, 
-  FileDoneOutlined, 
+import {
+  CheckOutlined,
+  UserSwitchOutlined,
+  FormOutlined,
+  FileDoneOutlined,
   UploadOutlined,
-  ReloadOutlined 
+  ReloadOutlined
 } from '@ant-design/icons';
-import { paknApi, danhmucApi } from '../api/api';
-import { PaknChiTiet, TrangThaiLabels, TrangThaiPAKN, DonVi, FileAttachment } from '../types';
-import { showErrorToast, showSuccessToast } from '../utils/swalAlert';
+import { paknApi, danhmucApi } from '../../api/api';
+import { PaknChiTiet, TrangThaiLabels, TrangThaiPAKN, DonVi, FileAttachment } from '../../types';
+import { showErrorToast, showSuccessToast } from '../../utils/swalAlert';
 import dayjs from 'dayjs';
 
 const { Title, Text } = Typography;

@@ -1,13 +1,13 @@
 import React from 'react';
 import { Menu } from 'antd';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { 
-  HomeOutlined, 
-  FormOutlined, 
-  SearchOutlined, 
-  FileSearchOutlined, 
+import {
+  HomeOutlined,
+  FormOutlined,
+  SearchOutlined,
+  FileSearchOutlined,
   DashboardOutlined,
-  SettingOutlined 
+  SettingOutlined
 } from '@ant-design/icons';
 
 export const Navbar: React.FC = () => {
@@ -21,6 +21,7 @@ export const Navbar: React.FC = () => {
     { key: '/huong-dan', label: 'Hướng dẫn sử dụng' },
     // { key: '/cong-khai', icon: <SearchOutlined />, label: 'Công khai' },
     { key: '/admin', label: 'Xử lý hồ sơ' },
+    { key: '/admin/thong-ke', label: 'Thống kê' },
     { key: '/admin/danhmuc', label: 'Quản lý danh mục' },
   ];
 
@@ -33,11 +34,11 @@ export const Navbar: React.FC = () => {
             <div style={{ fontSize: 14, color: '#6b7280' }}>Tiếp nhận, xử lý và trả lời phản ánh, kiến nghị của tổ chức, cá nhân</div>
           </div>
         </div>
-        <Menu 
-          mode="horizontal" 
-          selectedKeys={[location.pathname]} 
-          items={items} 
-          onClick={({ key }) => navigate(key)} 
+        <Menu
+          mode="horizontal"
+          selectedKeys={[location.pathname]}
+          items={items}
+          onClick={({ key }) => navigate(key)}
           style={{ borderBottom: 'none', flex: 1, justifyContent: 'flex-end' }}
         />
       </div>

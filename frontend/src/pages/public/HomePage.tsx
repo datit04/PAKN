@@ -1,10 +1,10 @@
 import React from 'react';
 import { Card, Row, Col, Button, Typography, Space, Tag } from 'antd';
 import { useNavigate } from 'react-router-dom';
-import { 
-  FormOutlined, 
-  SearchOutlined, 
-  SafetyCertificateOutlined, 
+import {
+  FormOutlined,
+  SearchOutlined,
+  SafetyCertificateOutlined,
   CheckCircleOutlined,
   ThunderboltOutlined,
   TeamOutlined
@@ -33,22 +33,19 @@ export const HomePage: React.FC = () => {
         <Title level={1} style={{ color: '#fff', marginBottom: 16, fontWeight: 800 }}>
           Hệ Thống Tiếp Nhận & Trả Lời Phản Ánh Kiến Nghị
         </Title>
-        <Paragraph style={{ color: '#e0e7ff', fontSize: 16, maxWidth: 800, margin: '0 auto 32px' }}>
-          Kênh tương tác trực tuyến thông suốt giữa Người dân, Doanh nghiệp, Tổ chức với các cấp chính quyền. Tiếp nhận 24/7 - Xử lý đúng thời hạn - Công khai minh bạch kết quả.
-        </Paragraph>
         <Space size="middle">
-          <Button 
-            type="primary" 
-            size="large" 
-            icon={<FormOutlined />} 
+          <Button
+            type="primary"
+            size="large"
+            icon={<FormOutlined />}
             onClick={() => navigate('/gui-pakn')}
             style={{ background: '#dc2626', borderColor: '#dc2626', height: 48, padding: '0 28px', fontSize: 16, fontWeight: 600 }}
           >
             Gửi Phản Ánh Kiến Nghị
           </Button>
-          <Button 
-            size="large" 
-            icon={<SearchOutlined />} 
+          <Button
+            size="large"
+            icon={<SearchOutlined />}
             onClick={() => navigate('/tra-cuu')}
             style={{ height: 48, padding: '0 28px', fontSize: 16 }}
           >
@@ -91,7 +88,7 @@ export const HomePage: React.FC = () => {
       </Row> */}
 
       {/* Cam kết phục vụ */}
-      <Card style={{ borderRadius: 12, background: '#f8fafc', border: '1px solid #e2e8f0' }}>
+      {/* <Card style={{ borderRadius: 12, background: '#f8fafc', border: '1px solid #e2e8f0' }}>
         <Row gutter={[24, 24]}>
           <Col xs={24} md={8}>
             <Space align="start">
@@ -121,7 +118,7 @@ export const HomePage: React.FC = () => {
             </Space>
           </Col>
         </Row>
-      </Card>
+      </Card> */}
     </div>
   );
 };

@@ -133,6 +133,13 @@ namespace PAKN.WebAPI.Controllers
             return Ok(new { success = true, data });
         }
 
+        [HttpGet("thong-ke")]
+        public async Task<IActionResult> GetThongKe()
+        {
+            var data = await _paknService.GetThongKeAsync();
+            return Ok(new { success = true, data });
+        }
+
         [HttpPost("{id}/tiep-nhan")]
         public async Task<IActionResult> TiepNhan(long id, [FromQuery] string? userId = "CB_TIEP_NHAN")
         {

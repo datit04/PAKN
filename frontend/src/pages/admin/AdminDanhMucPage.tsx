@@ -22,9 +22,9 @@ import {
   AppstoreOutlined,
   ReloadOutlined
 } from '@ant-design/icons';
-import { danhmucApi } from '../api/api';
-import { DonVi, LinhVuc, ChuDe } from '../types';
-import { showErrorToast, showSuccessToast } from '../utils/swalAlert';
+import { danhmucApi } from '../../api/api';
+import { DonVi, LinhVuc, ChuDe } from '../../types';
+import { showErrorToast, showSuccessToast } from '../../utils/swalAlert';
 
 const { Title, Text } = Typography;
 const { TextArea } = Input;

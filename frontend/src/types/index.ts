@@ -82,6 +82,7 @@ export interface CreatePaknPayload {
   doiTuongPAKN: DoiTuongPAKN;
   nguoiGui: NguoiGuiForm;
   chuDeId?: number | null;
+  linhVucId?: number | null;
   tieuDe: string;
   noiDung: string;
   donViTiepNhanId: number;
@@ -121,6 +122,13 @@ export interface PaknChiTiet {
     noiDungGopY?: string;
     ngayDanhGia: string;
   } | null;
+}
+
+export interface ThongKeAdmin {
+  tongSo: number;
+  theoTrangThai: { trangThai: TrangThaiPAKN; soLuong: number }[];
+  quaHan: number;
+  topDonViDangXuLy: { donViId: number; tenDonVi: string; soLuong: number }[];
 }
 
 export interface PaknCongKhaiItem {

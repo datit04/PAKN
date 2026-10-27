@@ -3,12 +3,14 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { ConfigProvider } from 'antd';
 import viVN from 'antd/locale/vi_VN';
 import { Navbar } from './components/Navbar';
-import { HomePage } from './pages/HomePage';
-import { SubmitPaknPage } from './pages/SubmitPaknPage';
-import { TrackingPage } from './pages/TrackingPage';
-import { PublicSearchPage } from './pages/PublicSearchPage';
-import { AdminDashboardPage } from './pages/AdminDashboardPage';
-import { AdminDanhMucPage } from './pages/AdminDanhMucPage';
+import { HomePage } from './pages/public/HomePage';
+import { SubmitPaknPage } from './pages/public/SubmitPaknPage';
+import { TrackingPage } from './pages/public/TrackingPage';
+import { PublicSearchPage } from './pages/public/PublicSearchPage';
+import { HuongDanPage } from './pages/public/HuongDanPage';
+import { AdminDashboardPage } from './pages/admin/AdminDashboardPage';
+import { AdminThongKePage } from './pages/admin/AdminThongKePage';
+import { AdminDanhMucPage } from './pages/admin/AdminDanhMucPage';
 
 export const App: React.FC = () => {
   return (
@@ -31,7 +33,10 @@ export const App: React.FC = () => {
               <Route path="/gui-pakn" element={<SubmitPaknPage />} />
               <Route path="/tra-cuu" element={<TrackingPage />} />
               <Route path="/cong-khai" element={<PublicSearchPage />} />
+              <Route path="/huong-dan" element={<HuongDanPage />} />
+              <Route path="/huong-dan/:section" element={<HuongDanPage />} />
               <Route path="/admin" element={<AdminDashboardPage />} />
+              <Route path="/admin/thong-ke" element={<AdminThongKePage />} />
               <Route path="/admin/danhmuc" element={<AdminDanhMucPage />} />
             </Routes>
           </main>

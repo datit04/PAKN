@@ -123,6 +123,7 @@ namespace PAKN.Infrastructure.Persistence
                 entity.HasOne(e => e.NguoiGui).WithMany().HasForeignKey(e => e.NguoiGuiId).OnDelete(DeleteBehavior.Restrict);
                 entity.HasOne(e => e.DonViTiepNhan).WithMany().HasForeignKey(e => e.DonViTiepNhanId).OnDelete(DeleteBehavior.Restrict);
                 entity.HasOne(e => e.ChuDe).WithMany().HasForeignKey(e => e.ChuDeId).OnDelete(DeleteBehavior.Restrict);
+                entity.HasOne(e => e.LinhVuc).WithMany().HasForeignKey(e => e.LinhVucId).OnDelete(DeleteBehavior.Restrict);
 
                 entity.HasOne(e => e.DanhGia)
                       .WithOne(d => d.PAKN)

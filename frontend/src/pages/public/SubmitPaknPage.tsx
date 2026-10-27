@@ -17,11 +17,11 @@ import {
   UploadOutlined,
   ReloadOutlined
 } from '@ant-design/icons';
-import { AddressSelector } from '../components/AddressSelector';
-import { PaknSidebar } from '../components/PaknSidebar';
-import { danhmucApi, paknApi } from '../api/api';
-import { DoiTuongPAKN, DonVi, LinhVuc, FileAttachment } from '../types';
-import { showPaknSuccessAlert } from '../utils/swalAlert';
+import { AddressSelector } from '../../components/AddressSelector';
+import { PaknSidebar } from '../../components/PaknSidebar';
+import { danhmucApi, paknApi } from '../../api/api';
+import { DoiTuongPAKN, DonVi, LinhVuc, FileAttachment } from '../../types';
+import { showPaknSuccessAlert } from '../../utils/swalAlert';
 
 const { Title, Paragraph, Text } = Typography;
 const { TextArea } = Input;
@@ -76,10 +76,14 @@ export const SubmitPaknPage: React.FC = () => {
   const onFinish = async (values: any) => {
     setSubmitting(true);
     try {
+      const [linhVucOrChuDe, rawId] = String(values.chuDeId).split(':');
+      const selectedId = Number(rawId);
+
       const payload = {
         doiTuongPAKN: doiTuong,
         nguoiGui: values.nguoiGui,
-        chuDeId: values.chuDeId,
+        chuDeId: linhVucOrChuDe === 'chude' ? selectedId : null,
+        linhVucId: linhVucOrChuDe === 'linhvuc' ? selectedId : null,
         tieuDe: values.tieuDe,
         noiDung: values.noiDung,
         donViTiepNhanId: values.donViTiepNhanId,
@@ -259,13 +263,13 @@ export const SubmitPaknPage: React.FC = () => {
                         options={linhVucList.flatMap(l => {
                           if (!l.danhSachChuDe?.length) {
                             return [{
-                              value: l.id,
+                              value: `linhvuc:${l.id}`,
                               label: `${l.tenLinhVuc}`
                             }];
                           }
 
                           return l.danhSachChuDe.map(c => ({
-                            value: c.id,
+                            value: `chude:${c.id}`,
                             label: `${l.tenLinhVuc} > ${c.tenChuDe}`
                           }));
                         })}
@@ -298,7 +302,11 @@ export const SubmitPaknPage: React.FC = () => {
                   name="noiDung"
                   label="Nội dung chi tiết"
                   rules={[{ required: true, message: 'Vui lòng nhập nội dung!' }]}
-                  extra="Nội dung này sẽ được công khai. Vui lòng không ghi chi tiết thông tin cá nhân!"
+                  extra={
+                    <span style={{ color: '#dc2626', fontStyle: 'italic' }}>
+                      *Nội dung sẽ được công khai. Vui lòng không ghi chi tiết thông tin cá nhân!
+                    </span>
+                  }
                 >
                   <TextArea rows={5} placeholder="Nhập nội dung" />
                 </Form.Item>

@@ -25,8 +25,8 @@ import {
   DownloadOutlined,
   StarOutlined
 } from '@ant-design/icons';
-import { paknApi } from '../api/api';
-import { PaknChiTiet, PaknCongKhaiItem, TrangThaiLabels, TrangThaiPAKN } from '../types';
+import { paknApi } from '../../api/api';
+import { PaknChiTiet, PaknCongKhaiItem, TrangThaiLabels, TrangThaiPAKN } from '../../types';
 import dayjs from 'dayjs';
 
 const { Title, Paragraph, Text } = Typography;
@@ -50,16 +50,18 @@ export const TrackingPage: React.FC = () => {
     nguoiGui: ''
   });
 
-  const searchByMaPAKN = async (maPAKN: string) => {
+  const searchByMaPAKN = async (maPAKN: string, fallbackList?: PaknChiTiet[]) => {
     setLoading(true);
     setPaknData(null);
-    setPaknList([]);
+    if (!fallbackList?.length) {
+      setPaknList([]);
+    }
 
     try {
       const res = await paknApi.traCuuChiTiet(maPAKN, '');
       if (res.success && res.data?.length > 0) {
-        setPaknList(res.data);
         setPaknData(res.data[0]);
+        setPaknList(fallbackList?.length ? fallbackList : res.data);
         setCurrentQuery({ maPAKN, nguoiGui: '' });
       } else {
         message.error('Không tìm thấy hồ sơ!');
@@ -90,21 +92,12 @@ export const TrackingPage: React.FC = () => {
 
     const maPAKN = searchParams.get('maPAKN');
     if (maPAKN) {
-      const navigationState = location.state as {
-        paknData?: PaknChiTiet;
-        paknList?: PaknChiTiet[];
-      } | null;
-
-      if (navigationState?.paknData?.maPAKN === maPAKN) {
-        setPaknData(navigationState.paknData);
-        setPaknList(navigationState.paknList || []);
-        setCurrentQuery({ maPAKN, nguoiGui: '' });
-      } else {
-        searchByMaPAKN(maPAKN);
-      }
+      const navigationState = location.state as { paknList?: PaknChiTiet[] } | null;
+      searchByMaPAKN(maPAKN, navigationState?.paknList);
     } else {
+      const navigationState = location.state as { paknList?: PaknChiTiet[] } | null;
       setPaknData(null);
-      setPaknList([]);
+      setPaknList(navigationState?.paknList || []);
       setCurrentQuery({ maPAKN: '', nguoiGui: '' });
     }
   }, [location.state, searchParams]);
@@ -173,12 +166,7 @@ export const TrackingPage: React.FC = () => {
 
   const handleSelectPakn = (item: PaknChiTiet) => {
     navigate(`/tra-cuu?maPAKN=${encodeURIComponent(item.maPAKN)}`, {
-      state: { paknData: item, paknList },
-    });
-    setPaknData(item);
-    setCurrentQuery({
-      maPAKN: item.maPAKN,
-      nguoiGui: currentQuery.nguoiGui,
+      state: { paknList },
     });
   };
 
@@ -291,7 +279,7 @@ export const TrackingPage: React.FC = () => {
           {paknList.length > 1 && (
             <Button
               type="link"
-              onClick={() => setPaknData(null)}
+              onClick={() => navigate('/tra-cuu', { state: { paknList } })}
               style={{ marginBottom: 12, paddingLeft: 0 }}
             >
               ← Quay lại danh sách ({paknList.length} kết quả)

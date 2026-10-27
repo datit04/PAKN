@@ -2,8 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { Card, Input, List, Tag, Typography, Button, Space, Row, Col } from 'antd';
 import { SearchOutlined, CheckCircleOutlined, UserOutlined, CalendarOutlined, BankOutlined } from '@ant-design/icons';
-import { paknApi } from '../api/api';
-import { PaknCongKhaiItem, TrangThaiLabels } from '../types';
+import { paknApi } from '../../api/api';
+import { PaknCongKhaiItem, TrangThaiLabels } from '../../types';
 import dayjs from 'dayjs';
 
 const { Title, Paragraph, Text } = Typography;

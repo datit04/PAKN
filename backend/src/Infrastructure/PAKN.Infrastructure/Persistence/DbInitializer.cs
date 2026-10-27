@@ -9,14 +9,48 @@ namespace PAKN.Infrastructure.Persistence
         {
             if (await context.TinhThanh.AnyAsync()) return;
 
-            // 1. Seed Tỉnh/Thành phố
-            var haNoi = new TinhThanh { MaTinh = "01", TenTinh = "Thành phố Hà Nội", IsActive = true };
-            var hcm = new TinhThanh { MaTinh = "79", TenTinh = "Thành phố Hồ Chí Minh", IsActive = true };
-            var daNang = new TinhThanh { MaTinh = "48", TenTinh = "Thành phố Đà Nẵng", IsActive = true };
-            var haiPhong = new TinhThanh { MaTinh = "31", TenTinh = "Thành phố Hải Phòng", IsActive = true };
-            var canTho = new TinhThanh { MaTinh = "92", TenTinh = "Thành phố Cần Thơ", IsActive = true };
+            // 1. Seed Tỉnh/Thành phố (34 tỉnh/thành sau sáp nhập)
+            var haNoi = new TinhThanh { MaTinh = "01", TenTinh = "Hà Nội", IsActive = true };
+            var bacNinh = new TinhThanh { MaTinh = "02", TenTinh = "Bắc Ninh", IsActive = true };
+            var quangNinh = new TinhThanh { MaTinh = "03", TenTinh = "Quảng Ninh", IsActive = true };
+            var haiPhong = new TinhThanh { MaTinh = "04", TenTinh = "Tp Hải Phòng", IsActive = true };
+            var hungYen = new TinhThanh { MaTinh = "05", TenTinh = "Hưng Yên", IsActive = true };
+            var ninhBinh = new TinhThanh { MaTinh = "06", TenTinh = "Ninh Bình", IsActive = true };
+            var caoBang = new TinhThanh { MaTinh = "07", TenTinh = "Cao Bằng", IsActive = true };
+            var tuyenQuang = new TinhThanh { MaTinh = "08", TenTinh = "Tuyên Quang", IsActive = true };
+            var laoCai = new TinhThanh { MaTinh = "09", TenTinh = "Lào Cai", IsActive = true };
+            var thaiNguyen = new TinhThanh { MaTinh = "10", TenTinh = "Thái Nguyên", IsActive = true };
+            var langSon = new TinhThanh { MaTinh = "11", TenTinh = "Lạng Sơn", IsActive = true };
+            var phuTho = new TinhThanh { MaTinh = "12", TenTinh = "Phú Thọ", IsActive = true };
+            var dienBien = new TinhThanh { MaTinh = "13", TenTinh = "Điện Biên", IsActive = true };
+            var laiChau = new TinhThanh { MaTinh = "14", TenTinh = "Lai Châu", IsActive = true };
+            var sonLa = new TinhThanh { MaTinh = "15", TenTinh = "Sơn La", IsActive = true };
+            var thanhHoa = new TinhThanh { MaTinh = "16", TenTinh = "Thanh Hóa", IsActive = true };
+            var ngheAn = new TinhThanh { MaTinh = "17", TenTinh = "Nghệ An", IsActive = true };
+            var haTinh = new TinhThanh { MaTinh = "18", TenTinh = "Hà Tĩnh", IsActive = true };
+            var quangTri = new TinhThanh { MaTinh = "19", TenTinh = "Quảng Trị", IsActive = true };
+            var hue = new TinhThanh { MaTinh = "20", TenTinh = "Huế", IsActive = true };
+            var daNang = new TinhThanh { MaTinh = "21", TenTinh = "Tp Đà Nẵng", IsActive = true };
+            var quangNgai = new TinhThanh { MaTinh = "22", TenTinh = "Quảng Ngãi", IsActive = true };
+            var khanhHoa = new TinhThanh { MaTinh = "23", TenTinh = "Khánh Hòa", IsActive = true };
+            var giaLai = new TinhThanh { MaTinh = "24", TenTinh = "Gia Lai", IsActive = true };
+            var dakLak = new TinhThanh { MaTinh = "25", TenTinh = "Đắk Lắk", IsActive = true };
+            var lamDong = new TinhThanh { MaTinh = "26", TenTinh = "Lâm Đồng", IsActive = true };
+            var tayNinh = new TinhThanh { MaTinh = "27", TenTinh = "Tây Ninh", IsActive = true };
+            var dongNai = new TinhThanh { MaTinh = "28", TenTinh = "Đồng Nai", IsActive = true };
+            var hcm = new TinhThanh { MaTinh = "29", TenTinh = "Tp Hồ Chí Minh", IsActive = true };
+            var vinhLong = new TinhThanh { MaTinh = "30", TenTinh = "Vĩnh Long", IsActive = true };
+            var dongThap = new TinhThanh { MaTinh = "31", TenTinh = "Đồng Tháp", IsActive = true };
+            var anGiang = new TinhThanh { MaTinh = "32", TenTinh = "An Giang", IsActive = true };
+            var canTho = new TinhThanh { MaTinh = "33", TenTinh = "Tp Cần Thơ", IsActive = true };
+            var caMau = new TinhThanh { MaTinh = "34", TenTinh = "Cà Mau", IsActive = true };
 
-            context.TinhThanh.AddRange(haNoi, hcm, daNang, haiPhong, canTho);
+            context.TinhThanh.AddRange(
+                haNoi, bacNinh, quangNinh, haiPhong, hungYen, ninhBinh, caoBang, tuyenQuang, laoCai, thaiNguyen,
+                langSon, phuTho, dienBien, laiChau, sonLa, thanhHoa, ngheAn, haTinh, quangTri, hue,
+                daNang, quangNgai, khanhHoa, giaLai, dakLak, lamDong, tayNinh, dongNai, hcm, vinhLong,
+                dongThap, anGiang, canTho, caMau
+            );
             await context.SaveChangesAsync();
 
             // 2. Seed Phường/Xã (Mô hình 2 cấp trực thuộc Tỉnh/TP)

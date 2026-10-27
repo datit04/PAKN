@@ -17,6 +17,7 @@ namespace PAKN.Application.Services
         
         // Admin operations
         Task<List<PaknChiTietResponse>> GetAllForAdminAsync(TrangThaiPAKN? trangThai = null);
+        Task<ThongKeAdminDto> GetThongKeAsync();
         Task<bool> TiepNhanAsync(long id, string userId);
         Task<bool> PhanCongAsync(long id, PhanCongRequest request, string userId);
         Task<bool> SoanTraLoiAsync(long id, SoanTraLoiRequest request, string userId);
@@ -42,6 +43,7 @@ namespace PAKN.Application.Services
                 .Include(x => x.NguoiGui)
                 .Include(x => x.DonViTiepNhan)
                 .Include(x => x.ChuDe)
+                .Include(x => x.LinhVuc)
                 .Include(x => x.Files)
                 .Include(x => x.LichSuTrangThai.OrderBy(x => x.CreatedAt))
                 .Include(x => x.DanhSachTraLoi.Where(x => x.IsPublished))
@@ -70,6 +72,7 @@ namespace PAKN.Application.Services
 
                 TenDonViTiepNhan = pakn.DonViTiepNhan?.TenDonVi ?? "",
                 TenChuDe = pakn.ChuDe?.TenChuDe,
+                TenLinhVuc = pakn.LinhVuc?.TenLinhVuc,
 
                 NguoiGui = new NguoiGuiDto
                 {
@@ -234,14 +237,17 @@ namespace PAKN.Application.Services
 
             var maBiMat = GenerateSecretCode(6);
 
-            DateTime? hanXuLy = null;
+            const int SoNgayXuLyMacDinh = 15;
+
+            DateTime? hanXuLy;
             if (request.ChuDeId.HasValue)
             {
                 var chuDe = await _context.ChuDePAKN.FindAsync(request.ChuDeId.Value);
-                if (chuDe != null)
-                {
-                    hanXuLy = DateTime.Now.AddDays(chuDe.ThoiGianXuLyMacDinhNgay);
-                }
+                hanXuLy = DateTime.Now.AddDays(chuDe?.ThoiGianXuLyMacDinhNgay ?? SoNgayXuLyMacDinh);
+            }
+            else
+            {
+                hanXuLy = DateTime.Now.AddDays(SoNgayXuLyMacDinh);
             }
 
             var pakn = new PAKN.Domain.Entities.PAKN
@@ -251,6 +257,7 @@ namespace PAKN.Application.Services
                 DoiTuongPAKN = request.DoiTuongPAKN,
                 NguoiGuiId = nguoiGui.Id,
                 ChuDeId = request.ChuDeId,
+                LinhVucId = request.ChuDeId.HasValue ? null : request.LinhVucId,
                 TieuDe = request.TieuDe,
                 NoiDung = request.NoiDung,
                 DonViTiepNhanId = request.DonViTiepNhanId,
@@ -302,6 +309,7 @@ namespace PAKN.Application.Services
                 .Include(x => x.NguoiGui)
                 .Include(x => x.DonViTiepNhan)
                 .Include(x => x.ChuDe)
+                .Include(x => x.LinhVuc)
                 .Include(x => x.Files)
                 .Include(x => x.LichSuTrangThai.OrderBy(l => l.CreatedAt))
                 .Include(x => x.DanhSachTraLoi.Where(t => t.IsPublished))
@@ -340,6 +348,7 @@ namespace PAKN.Application.Services
                 HanXuLy = pakn.HanXuLy,
                 TenDonViTiepNhan = pakn.DonViTiepNhan?.TenDonVi ?? "",
                 TenChuDe = pakn.ChuDe?.TenChuDe,
+                TenLinhVuc = pakn.LinhVuc?.TenLinhVuc,
                 NguoiGui = new NguoiGuiDto
                 {
                     HoTen = pakn.NguoiGui?.HoTen,
@@ -456,6 +465,7 @@ namespace PAKN.Application.Services
                 .Include(x => x.NguoiGui)
                 .Include(x => x.DonViTiepNhan)
                 .Include(x => x.ChuDe)
+                .Include(x => x.LinhVuc)
                 .Include(x => x.Files)
                 .Include(x => x.LichSuTrangThai)
                 .Include(x => x.DanhSachTraLoi)
@@ -479,6 +489,7 @@ namespace PAKN.Application.Services
                 HanXuLy = pakn.HanXuLy,
                 TenDonViTiepNhan = pakn.DonViTiepNhan?.TenDonVi ?? "",
                 TenChuDe = pakn.ChuDe?.TenChuDe,
+                TenLinhVuc = pakn.LinhVuc?.TenLinhVuc,
                 NguoiGui = new NguoiGuiDto
                 {
                     HoTen = pakn.NguoiGui?.HoTen,
@@ -489,6 +500,45 @@ namespace PAKN.Application.Services
                     DiaChiChiTiet = pakn.NguoiGui?.DiaChiChiTiet
                 }
             }).ToList();
+        }
+
+        public async Task<ThongKeAdminDto> GetThongKeAsync()
+        {
+            var theoTrangThai = await _context.PAKN
+                .GroupBy(x => x.TrangThai)
+                .Select(g => new ThongKeTrangThaiDto { TrangThai = g.Key, SoLuong = g.Count() })
+                .ToListAsync();
+
+            var now = DateTime.Now;
+            var quaHan = await _context.PAKN
+                .CountAsync(x => x.HanXuLy != null && x.HanXuLy < now
+                    && x.TrangThai != TrangThaiPAKN.HoanThanh && x.TrangThai != TrangThaiPAKN.TuChoi);
+
+            var topDonViRaw = await _context.PAKN
+                .Where(x => x.TrangThai == TrangThaiPAKN.DangXuLy)
+                .GroupBy(x => x.DonViTiepNhanId)
+                .Select(g => new { DonViId = g.Key, SoLuong = g.Count() })
+                .OrderByDescending(x => x.SoLuong)
+                .Take(5)
+                .ToListAsync();
+
+            var donViIds = topDonViRaw.Select(x => x.DonViId).ToList();
+            var tenDonViDict = await _context.DonVi
+                .Where(d => donViIds.Contains(d.Id))
+                .ToDictionaryAsync(d => d.Id, d => d.TenDonVi);
+
+            return new ThongKeAdminDto
+            {
+                TongSo = theoTrangThai.Sum(x => x.SoLuong),
+                TheoTrangThai = theoTrangThai,
+                QuaHan = quaHan,
+                TopDonViDangXuLy = topDonViRaw.Select(x => new ThongKeTopDonViDto
+                {
+                    DonViId = x.DonViId,
+                    TenDonVi = tenDonViDict.TryGetValue(x.DonViId, out var ten) ? ten : "Không rõ",
+                    SoLuong = x.SoLuong
+                }).ToList()
+            };
         }
 
         public async Task<bool> TiepNhanAsync(long id, string userId)

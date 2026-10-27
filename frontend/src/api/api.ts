@@ -1,14 +1,15 @@
 import axios from 'axios';
-import { 
-  TinhThanh, 
-  PhuongXa, 
-  DonVi, 
-  LinhVuc, 
-  CreatePaknPayload, 
-  PaknChiTiet, 
-  PaknCongKhaiItem, 
+import {
+  TinhThanh,
+  PhuongXa,
+  DonVi,
+  LinhVuc,
+  CreatePaknPayload,
+  PaknChiTiet,
+  PaknCongKhaiItem,
   FileAttachment,
-  TrangThaiPAKN
+  TrangThaiPAKN,
+  ThongKeAdmin
 } from '../types';
 
 export const apiClient = axios.create({
@@ -157,6 +158,11 @@ export const paknApi = {
   // Admin APIs
   adminGetAll: async (trangThai?: number) => {
     const res = await apiClient.get('/admin/danh-sach', { params: { trangThai } });
+    return res.data;
+  },
+
+  adminGetThongKe: async (): Promise<{ success: boolean; data: ThongKeAdmin }> => {
+    const res = await apiClient.get('/admin/thong-ke');
     return res.data;
   },
 
