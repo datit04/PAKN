@@ -114,7 +114,7 @@ export const SubmitPaknPage: React.FC = () => {
         <Col xs={24} md={18} style={{ alignSelf: 'flex-start' }}>
           <Card style={{ width: '100%', borderRadius: 12, boxShadow: '0 4px 12px rgba(0,0,0,0.05)' }}>
             <div style={{ textAlign: 'center', marginBottom: 24 }}>
-              <Title level={2} style={{ color: '#b91c1c', marginBottom: 8 }}>Tiếp nhận phản ánh kiến nghị</Title>
+              <Title level={2} style={{ color: '#b91c1c', marginBottom: 8 }}>Phản ánh kiến nghị</Title>
             </div>
 
             <Form form={form} layout="vertical" onFinish={onFinish} initialValues={{ isAnDanh: false }}>
