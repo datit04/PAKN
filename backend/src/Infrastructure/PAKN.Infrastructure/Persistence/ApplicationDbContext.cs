@@ -195,7 +195,7 @@ namespace PAKN.Infrastructure.Persistence
                 entity.HasOne(e => e.Parent)
                       .WithMany(p => p.Children)
                       .HasForeignKey(e => e.ParentId)
-                      .OnDelete(DeleteBehavior.Cascade);
+                      .OnDelete(DeleteBehavior.Restrict);
             });
         }
     }

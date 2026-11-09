@@ -129,6 +129,23 @@ namespace PAKN.Infrastructure.Persistence
 
         private static async Task SeedLuuYAsync(ApplicationDbContext context)
         {
+            // Tự động tạo bảng CauHinhLuuY nếu chưa tồn tại trong Database
+            await context.Database.ExecuteSqlRawAsync(@"
+                IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'CauHinhLuuY')
+                BEGIN
+                    CREATE TABLE [CauHinhLuuY] (
+                        [Id] int NOT NULL IDENTITY(1,1),
+                        [NoiDung] nvarchar(1000) NOT NULL,
+                        [ParentId] int NULL,
+                        [ThuTu] int NOT NULL DEFAULT 1,
+                        [IsActive] bit NOT NULL DEFAULT 1,
+                        [CreatedAt] datetime2 NOT NULL DEFAULT GETUTCDATE(),
+                        CONSTRAINT [PK_CauHinhLuuY] PRIMARY KEY ([Id]),
+                        CONSTRAINT [FK_CauHinhLuuY_Parent] FOREIGN KEY ([ParentId]) REFERENCES [CauHinhLuuY] ([Id])
+                    );
+                END
+            ");
+
             if (await context.CauHinhLuuY.AnyAsync()) return;
 
             var muc1 = new CauHinhLuuY

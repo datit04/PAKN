@@ -492,6 +492,11 @@ namespace PAKN.Application.Services
             var item = await _context.CauHinhLuuY.Include(x => x.Children).FirstOrDefaultAsync(x => x.Id == id);
             if (item == null) return false;
 
+            if (item.Children.Any())
+            {
+                _context.CauHinhLuuY.RemoveRange(item.Children);
+            }
+
             _context.CauHinhLuuY.Remove(item);
             await _context.SaveChangesAsync();
             return true;
