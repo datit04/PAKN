@@ -9,7 +9,8 @@ import {
   PaknCongKhaiItem,
   FileAttachment,
   TrangThaiPAKN,
-  ThongKeAdmin
+  ThongKeAdmin,
+  LuuYItem
 } from '../types';
 
 export const apiClient = axios.create({
@@ -95,6 +96,28 @@ export const danhmucApi = {
   },
   deleteChuDe: async (id: number) => {
     const res = await apiClient.delete(`/danhmuc/chu-de/${id}`);
+    return res.data;
+  },
+
+  // CRUD Cấu hình Lưu ý
+  getLuuY: async (all = false): Promise<LuuYItem[]> => {
+    const res = await apiClient.get('/danhmuc/luu-y', { params: { all } });
+    return res.data;
+  },
+  createLuuY: async (data: Partial<LuuYItem>) => {
+    const res = await apiClient.post('/danhmuc/luu-y', data);
+    return res.data;
+  },
+  updateLuuY: async (id: number, data: Partial<LuuYItem>) => {
+    const res = await apiClient.put(`/danhmuc/luu-y/${id}`, data);
+    return res.data;
+  },
+  toggleLuuY: async (id: number) => {
+    const res = await apiClient.patch(`/danhmuc/luu-y/${id}/toggle`);
+    return res.data;
+  },
+  deleteLuuY: async (id: number) => {
+    const res = await apiClient.delete(`/danhmuc/luu-y/${id}`);
     return res.data;
   }
 };

@@ -178,6 +178,82 @@ namespace PAKN.WebAPI.Controllers
                 return BadRequest(new { success = false, message = ex.Message });
             }
         }
+
+        // ================= CRUD CẤU HÌNH LƯU Ý =================
+        [HttpGet("luu-y")]
+        public async Task<IActionResult> GetLuuY([FromQuery] bool all = false)
+        {
+            var data = await _danhMucService.GetLuuYAsync(onlyActive: !all);
+            return Ok(data);
+        }
+
+        [HttpPost("luu-y")]
+        public async Task<IActionResult> CreateLuuY([FromBody] PAKN.Application.DTOs.CreateLuuYRequest request)
+        {
+            try
+            {
+                if (string.IsNullOrWhiteSpace(request.NoiDung))
+                    return BadRequest(new { success = false, message = "Nội dung lưu ý không được để trống!" });
+
+                var result = await _danhMucService.CreateLuuYAsync(request);
+                return Ok(new { success = true, data = result, message = "Thêm mục lưu ý thành công!" });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { success = false, message = ex.Message });
+            }
+        }
+
+        [HttpPut("luu-y/{id}")]
+        public async Task<IActionResult> UpdateLuuY(int id, [FromBody] PAKN.Application.DTOs.UpdateLuuYRequest request)
+        {
+            try
+            {
+                if (string.IsNullOrWhiteSpace(request.NoiDung))
+                    return BadRequest(new { success = false, message = "Nội dung lưu ý không được để trống!" });
+
+                var ok = await _danhMucService.UpdateLuuYAsync(id, request);
+                if (!ok) return NotFound(new { success = false, message = "Không tìm thấy mục lưu ý!" });
+
+                return Ok(new { success = true, message = "Cập nhật mục lưu ý thành công!" });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { success = false, message = ex.Message });
+            }
+        }
+
+        [HttpPatch("luu-y/{id}/toggle")]
+        public async Task<IActionResult> ToggleLuuY(int id)
+        {
+            try
+            {
+                var ok = await _danhMucService.ToggleLuuYActiveAsync(id);
+                if (!ok) return NotFound(new { success = false, message = "Không tìm thấy mục lưu ý!" });
+
+                return Ok(new { success = true, message = "Thay đổi trạng thái hiển thị thành công!" });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { success = false, message = ex.Message });
+            }
+        }
+
+        [HttpDelete("luu-y/{id}")]
+        public async Task<IActionResult> DeleteLuuY(int id)
+        {
+            try
+            {
+                var ok = await _danhMucService.DeleteLuuYAsync(id);
+                if (!ok) return NotFound(new { success = false, message = "Không tìm thấy mục lưu ý!" });
+
+                return Ok(new { success = true, message = "Xóa mục lưu ý thành công!" });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { success = false, message = ex.Message });
+            }
+        }
     }
 
     [ApiController]

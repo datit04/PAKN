@@ -22,6 +22,7 @@ namespace PAKN.Infrastructure.Persistence
         public DbSet<PAKN_LichSuTrangThai> PAKN_LichSuTrangThai => Set<PAKN_LichSuTrangThai>();
         public DbSet<PAKN_TraLoi> PAKN_TraLoi => Set<PAKN_TraLoi>();
         public DbSet<PAKN_DanhGia> PAKN_DanhGia => Set<PAKN_DanhGia>();
+        public DbSet<CauHinhLuuY> CauHinhLuuY => Set<CauHinhLuuY>();
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -183,6 +184,18 @@ namespace PAKN.Infrastructure.Persistence
                 entity.ToTable("PAKN_DanhGia");
                 entity.HasKey(e => e.Id);
                 entity.HasIndex(e => e.PAKNId).IsUnique();
+            });
+
+            // CauHinhLuuY
+            modelBuilder.Entity<CauHinhLuuY>(entity =>
+            {
+                entity.ToTable("CauHinhLuuY");
+                entity.HasKey(e => e.Id);
+                entity.Property(e => e.NoiDung).HasMaxLength(1000).IsRequired();
+                entity.HasOne(e => e.Parent)
+                      .WithMany(p => p.Children)
+                      .HasForeignKey(e => e.ParentId)
+                      .OnDelete(DeleteBehavior.Cascade);
             });
         }
     }
