@@ -44,7 +44,9 @@ build-backend:
 # =========================
 deploy-frontend:
   stage: deploy
-  image: rancher/kubectl:v1.35.5
+  image:
+  name: rancher/kubectl:v1.35.5
+  entrypoint: [""]
   tags:
     - pakn-docker
   script:
