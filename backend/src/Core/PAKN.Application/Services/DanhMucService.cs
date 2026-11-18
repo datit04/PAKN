@@ -36,12 +36,9 @@ namespace PAKN.Application.Services
         Task<bool> UpdatePhuongXaAsync(int id, UpdatePhuongXaRequest request);
         Task<bool> DeletePhuongXaAsync(int id);
 
-        // CRUD Cấu hình Lưu ý & Hướng dẫn
-        Task<List<LuuYDto>> GetLuuYAsync(bool onlyActive = true);
-        Task<LuuYDto> CreateLuuYAsync(CreateLuuYRequest request);
-        Task<bool> UpdateLuuYAsync(int id, UpdateLuuYRequest request);
-        Task<bool> ToggleLuuYActiveAsync(int id);
-        Task<bool> DeleteLuuYAsync(int id);
+        // Cấu hình hệ thống (Key - Value)
+        Task<string> GetCauHinhAsync(string maCauHinh);
+        Task<bool> UpdateCauHinhAsync(string maCauHinh, string giaTri, string? tenCauHinh = null);
     }
 
     public class DanhMucService : IDanhMucService
@@ -407,97 +404,37 @@ namespace PAKN.Application.Services
             return true;
         }
 
-        // ================= CRUD CẤU HÌNH LƯU Ý =================
-        public async Task<List<LuuYDto>> GetLuuYAsync(bool onlyActive = true)
+        // ================= CẤU HÌNH HỆ THỐNG (KEY - VALUE) =================
+        public async Task<string> GetCauHinhAsync(string maCauHinh)
         {
-            var query = _context.CauHinhLuuY.AsQueryable();
-            if (onlyActive)
-            {
-                query = query.Where(x => x.IsActive);
-            }
+            var item = await _context.CauHinhHeThong.FindAsync(maCauHinh);
+            var val = item?.GiaTri ?? string.Empty;
+            return val.Replace("&nbsp;", " ").Replace("\u00a0", " ");
+        }
 
-            var allItems = await query.OrderBy(x => x.ThuTu).ToListAsync();
+        public async Task<bool> UpdateCauHinhAsync(string maCauHinh, string giaTri, string? tenCauHinh = null)
+        {
+            giaTri = giaTri.Replace("&nbsp;", " ").Replace("\u00a0", " ");
 
-            // Nhóm cha - con
-            var rootItems = allItems.Where(x => x.ParentId == null).OrderBy(x => x.ThuTu).ToList();
-            var result = rootItems.Select(r => new LuuYDto
+            var item = await _context.CauHinhHeThong.FindAsync(maCauHinh);
+            if (item == null)
             {
-                Id = r.Id,
-                NoiDung = r.NoiDung,
-                ParentId = r.ParentId,
-                ThuTu = r.ThuTu,
-                IsActive = r.IsActive,
-                Children = allItems.Where(c => c.ParentId == r.Id).OrderBy(c => c.ThuTu).Select(c => new LuuYDto
+                item = new PAKN.Domain.Entities.CauHinhHeThong
                 {
-                    Id = c.Id,
-                    NoiDung = c.NoiDung,
-                    ParentId = c.ParentId,
-                    ThuTu = c.ThuTu,
-                    IsActive = c.IsActive
-                }).ToList()
-            }).ToList();
-
-            return result;
-        }
-
-        public async Task<LuuYDto> CreateLuuYAsync(CreateLuuYRequest request)
-        {
-            var item = new PAKN.Domain.Entities.CauHinhLuuY
+                    MaCauHinh = maCauHinh,
+                    TenCauHinh = tenCauHinh ?? maCauHinh,
+                    GiaTri = giaTri,
+                    UpdatedAt = DateTime.UtcNow
+                };
+                _context.CauHinhHeThong.Add(item);
+            }
+            else
             {
-                NoiDung = request.NoiDung.Trim(),
-                ParentId = request.ParentId,
-                ThuTu = request.ThuTu,
-                IsActive = request.IsActive
-            };
-
-            _context.CauHinhLuuY.Add(item);
-            await _context.SaveChangesAsync();
-
-            return new LuuYDto
-            {
-                Id = item.Id,
-                NoiDung = item.NoiDung,
-                ParentId = item.ParentId,
-                ThuTu = item.ThuTu,
-                IsActive = item.IsActive
-            };
-        }
-
-        public async Task<bool> UpdateLuuYAsync(int id, UpdateLuuYRequest request)
-        {
-            var item = await _context.CauHinhLuuY.FindAsync(id);
-            if (item == null) return false;
-
-            item.NoiDung = request.NoiDung.Trim();
-            item.ParentId = request.ParentId;
-            item.ThuTu = request.ThuTu;
-            item.IsActive = request.IsActive;
-
-            await _context.SaveChangesAsync();
-            return true;
-        }
-
-        public async Task<bool> ToggleLuuYActiveAsync(int id)
-        {
-            var item = await _context.CauHinhLuuY.FindAsync(id);
-            if (item == null) return false;
-
-            item.IsActive = !item.IsActive;
-            await _context.SaveChangesAsync();
-            return true;
-        }
-
-        public async Task<bool> DeleteLuuYAsync(int id)
-        {
-            var item = await _context.CauHinhLuuY.Include(x => x.Children).FirstOrDefaultAsync(x => x.Id == id);
-            if (item == null) return false;
-
-            if (item.Children.Any())
-            {
-                _context.CauHinhLuuY.RemoveRange(item.Children);
+                item.GiaTri = giaTri;
+                if (!string.IsNullOrEmpty(tenCauHinh)) item.TenCauHinh = tenCauHinh;
+                item.UpdatedAt = DateTime.UtcNow;
             }
 
-            _context.CauHinhLuuY.Remove(item);
             await _context.SaveChangesAsync();
             return true;
         }

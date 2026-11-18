@@ -143,12 +143,3 @@ export interface PaknCongKhaiItem {
   ngayTraLoi?: string;
   soLuotDanhGia?: number;
 }
-
-export interface LuuYItem {
-  id: number;
-  noiDung: string;
-  parentId?: number | null;
-  thuTu: number;
-  isActive: boolean;
-  children?: LuuYItem[];
-}

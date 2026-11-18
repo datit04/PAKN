@@ -105,26 +105,16 @@ namespace PAKN.Application.DTOs
         public bool IsActive { get; set; } = true;
     }
 
-    // CRUD Lưu ý & Hướng dẫn
-    public class LuuYDto
+    // Cấu hình hệ thống (Key - Value)
+    public class CauHinhDto
     {
-        public int Id { get; set; }
-        public string NoiDung { get; set; } = string.Empty;
-        public int? ParentId { get; set; }
-        public int ThuTu { get; set; } = 1;
-        public bool IsActive { get; set; } = true;
-        public List<LuuYDto> Children { get; set; } = new();
+        public string MaCauHinh { get; set; } = string.Empty;
+        public string? TenCauHinh { get; set; }
+        public string GiaTri { get; set; } = string.Empty;
     }
 
-    public class CreateLuuYRequest
+    public class UpdateCauHinhRequest
     {
-        public string NoiDung { get; set; } = string.Empty;
-        public int? ParentId { get; set; }
-        public int ThuTu { get; set; } = 1;
-        public bool IsActive { get; set; } = true;
-    }
-
-    public class UpdateLuuYRequest : CreateLuuYRequest
-    {
+        public string GiaTri { get; set; } = string.Empty;
     }
 }

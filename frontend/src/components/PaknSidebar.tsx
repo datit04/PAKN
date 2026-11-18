@@ -7,15 +7,25 @@ import {
   SearchOutlined
 } from '@ant-design/icons';
 import { paknApi, danhmucApi } from '../api/api';
-import { LuuYItem } from '../types';
 
 const { Text } = Typography;
+
+const DEFAULT_LUU_Y_HTML = `
+  <p><strong>1. Hệ thống tiếp nhận các phản ánh, kiến nghị về:</strong></p>
+  <ul style="padding-left: 20px; margin-top: 6px;">
+    <li>Hành vi chậm trễ, gây phiền hà hoặc không thực hiện, thực hiện không đúng quy định trong giải quyết thủ tục hành chính;</li>
+    <li>Cơ chế, chính sách, thủ tục hành chính không phù hợp với thực tế, không đồng bộ, không thống nhất hoặc không hợp pháp;</li>
+    <li>Giải pháp, sáng kiến liên quan đến hoạt động sản xuất, kinh doanh và đời sống của người dân;</li>
+    <li>Các trường hợp thực hiện không đúng Nghị quyết 68/NQ-CP và Quyết định 23/2021/QĐ-TTg.</li>
+  </ul>
+  <p><strong>2. Hệ thống không tiếp nhận đơn thư khiếu nại, tố cáo và hướng dẫn giải đáp pháp luật.</strong></p>
+`;
 
 export const PaknSidebar: React.FC = () => {
   const navigate = useNavigate();
   const [keyword, setKeyword] = useState('');
   const [statistics, setStatistics] = useState({ daTraLoi: 0, dangXuLy: 0 });
-  const [luuYList, setLuuYList] = useState<LuuYItem[]>([]);
+  const [luuYHtml, setLuuYHtml] = useState<string>('');
 
   const handleSearch = () => {
     const searchKeyword = keyword.trim();
@@ -32,9 +42,9 @@ export const PaknSidebar: React.FC = () => {
       .catch(console.error);
 
     danhmucApi.getLuuY()
-      .then(data => {
-        if (data && Array.isArray(data) && data.length > 0) {
-          setLuuYList(data);
+      .then(res => {
+        if (res && res.success && res.data) {
+          setLuuYHtml(res.data);
         }
       })
       .catch(console.error);
@@ -48,37 +58,10 @@ export const PaknSidebar: React.FC = () => {
         style={{ borderRadius: 4, borderColor: '#d9d9d9' }}
         headStyle={{ background: '#e5e7eb', fontSize: 18, color: '#1f2937' }}
       >
-        {luuYList.length > 0 ? (
-          <ul style={{ margin: 0, paddingLeft: 0, color: '#334155', lineHeight: 1.65, listStyleType: 'none' }}>
-            {luuYList.map((item, index) => (
-              <li key={item.id} style={{ marginBottom: index < luuYList.length - 1 ? 12 : 0 }}>
-                <strong>{item.noiDung}</strong>
-                {item.children && item.children.length > 0 && (
-                  <ul style={{ paddingLeft: 18, marginTop: 6, listStyleType: 'disc' }}>
-                    {item.children.map(child => (
-                      <li key={child.id} style={{ marginBottom: 4 }}>
-                        {child.noiDung}
-                      </li>
-                    ))}
-                  </ul>
-                )}
-              </li>
-            ))}
-          </ul>
-        ) : (
-          <ul style={{ margin: 0, paddingLeft: 0, color: '#334155', lineHeight: 1.65, listStyleType: 'none' }}>
-            <li style={{ marginBottom: 12 }}>
-              <strong>1. Hệ thống tiếp nhận các phản ánh, kiến nghị về:</strong>
-              <ul style={{ paddingLeft: 18, marginTop: 6, listStyleType: 'disc' }}>
-                <li>Hành vi chậm trễ, gây phiền hà hoặc không thực hiện, thực hiện không đúng quy định trong giải quyết thủ tục hành chính;</li>
-                <li>Cơ chế, chính sách, thủ tục hành chính không phù hợp với thực tế, không đồng bộ, không thống nhất hoặc không hợp pháp;</li>
-                <li>Giải pháp, sáng kiến liên quan đến hoạt động sản xuất, kinh doanh và đời sống của người dân;</li>
-                <li>Các trường hợp thực hiện không đúng Nghị quyết 68/NQ-CP và Quyết định 23/2021/QĐ-TTg.</li>
-              </ul>
-            </li>
-            <li><strong>2. Hệ thống không tiếp nhận đơn thư khiếu nại, tố cáo và hướng dẫn giải đáp pháp luật.</strong></li>
-          </ul>
-        )}
+        <div
+          style={{ color: '#334155', lineHeight: 1.65, fontSize: 14 }}
+          dangerouslySetInnerHTML={{ __html: luuYHtml || DEFAULT_LUU_Y_HTML }}
+        />
       </Card>
 
       <Card

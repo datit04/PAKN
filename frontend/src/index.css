@@ -26,3 +26,23 @@ body {
 ::-webkit-scrollbar-thumb:hover {
   background: #94a3b8;
 }
+
+/* Định dạng nội dung HTML cho khối Lưu ý */
+.luu-y-html-content {
+  color: #334155;
+  line-height: 1.65;
+  font-size: 14px;
+  word-break: break-word;
+  overflow-wrap: anywhere;
+}
+.luu-y-html-content p {
+  margin-bottom: 8px;
+}
+.luu-y-html-content ul,
+.luu-y-html-content ol {
+  padding-left: 20px;
+  margin-bottom: 8px;
+}
+.luu-y-html-content li {
+  margin-bottom: 4px;
+}

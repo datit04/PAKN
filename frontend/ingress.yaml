@@ -1,0 +1,19 @@
+
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: pakn-frontend-ingress
+  namespace: default
+spec:
+  ingressClassName: traefik
+  rules:
+    - host: pakn.localhost
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: pakn-frontend-service
+                port:
+                  number: 80

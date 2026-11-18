@@ -22,7 +22,7 @@ namespace PAKN.Infrastructure.Persistence
         public DbSet<PAKN_LichSuTrangThai> PAKN_LichSuTrangThai => Set<PAKN_LichSuTrangThai>();
         public DbSet<PAKN_TraLoi> PAKN_TraLoi => Set<PAKN_TraLoi>();
         public DbSet<PAKN_DanhGia> PAKN_DanhGia => Set<PAKN_DanhGia>();
-        public DbSet<CauHinhLuuY> CauHinhLuuY => Set<CauHinhLuuY>();
+        public DbSet<CauHinhHeThong> CauHinhHeThong => Set<CauHinhHeThong>();
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -186,16 +186,14 @@ namespace PAKN.Infrastructure.Persistence
                 entity.HasIndex(e => e.PAKNId).IsUnique();
             });
 
-            // CauHinhLuuY
-            modelBuilder.Entity<CauHinhLuuY>(entity =>
+            // CauHinhHeThong
+            modelBuilder.Entity<CauHinhHeThong>(entity =>
             {
-                entity.ToTable("CauHinhLuuY");
-                entity.HasKey(e => e.Id);
-                entity.Property(e => e.NoiDung).HasMaxLength(1000).IsRequired();
-                entity.HasOne(e => e.Parent)
-                      .WithMany(p => p.Children)
-                      .HasForeignKey(e => e.ParentId)
-                      .OnDelete(DeleteBehavior.Restrict);
+                entity.ToTable("CauHinhHeThong");
+                entity.HasKey(e => e.MaCauHinh);
+                entity.Property(e => e.MaCauHinh).HasMaxLength(100);
+                entity.Property(e => e.TenCauHinh).HasMaxLength(255);
+                entity.Property(e => e.GiaTri).IsRequired();
             });
         }
     }

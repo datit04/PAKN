@@ -13,7 +13,9 @@ import {
   Popconfirm,
   Typography,
   Tag,
-  Switch
+  Switch,
+  Row,
+  Col
 } from 'antd';
 import {
   PlusOutlined,
@@ -22,10 +24,14 @@ import {
   BankOutlined,
   AppstoreOutlined,
   ReloadOutlined,
-  InfoCircleOutlined
+  InfoCircleOutlined,
+  SaveOutlined,
+  UndoOutlined
 } from '@ant-design/icons';
+import ReactQuill from 'react-quill-new';
+import 'react-quill-new/dist/quill.snow.css';
 import { danhmucApi } from '../../api/api';
-import { DonVi, LinhVuc, ChuDe, LuuYItem } from '../../types';
+import { DonVi, LinhVuc, ChuDe } from '../../types';
 import { showErrorToast, showSuccessToast } from '../../utils/swalAlert';
 
 const { Title, Text } = Typography;
@@ -51,23 +57,23 @@ export const AdminDanhMucPage: React.FC = () => {
   const [editingChuDe, setEditingChuDe] = useState<{ chuDe: ChuDe; linhVucId: number } | null>(null);
   const [formChuDe] = Form.useForm();
 
-  // Cấu hình Lưu ý
-  const [luuYList, setLuuYList] = useState<LuuYItem[]>([]);
-  const [isLuuYModalOpen, setIsLuuYModalOpen] = useState(false);
-  const [editingLuuY, setEditingLuuY] = useState<LuuYItem | null>(null);
-  const [formLuuY] = Form.useForm();
+  // Cấu hình Lưu ý (Rich Text HTML)
+  const [luuYHtml, setLuuYHtml] = useState<string>('');
+  const [savingLuuY, setSavingLuuY] = useState(false);
 
   const loadData = async () => {
     setLoading(true);
     try {
-      const [dv, lv, ly] = await Promise.all([
+      const [dv, lv, lyRes] = await Promise.all([
         danhmucApi.getDonViTiepNhan(),
         danhmucApi.getLinhVucVaChuDe(),
-        danhmucApi.getLuuY(true)
+        danhmucApi.getLuuY()
       ]);
       setDonViList(dv);
       setLinhVucList(lv);
-      setLuuYList(ly);
+      if (lyRes && lyRes.success && lyRes.data) {
+        setLuuYHtml(lyRes.data);
+      }
     } catch (err) {
       showErrorToast('Lỗi khi tải danh mục');
     } finally {
@@ -195,136 +201,40 @@ export const AdminDanhMucPage: React.FC = () => {
     }
   };
 
-  // ================= QUẢN LÝ LƯU Ý =================
-  const handleOpenLuuYModal = (record?: LuuYItem, defaultParentId?: number) => {
-    if (record) {
-      setEditingLuuY(record);
-      formLuuY.setFieldsValue({
-        ...record,
-        parentId: record.parentId || undefined
-      });
-    } else {
-      setEditingLuuY(null);
-      formLuuY.resetFields();
-      formLuuY.setFieldsValue({
-        parentId: defaultParentId || undefined,
-        thuTu: 1,
-        isActive: true
-      });
-    }
-    setIsLuuYModalOpen(true);
-  };
-
-  const handleSaveLuuY = async (values: any) => {
+  // ================= CẤU HÌNH LƯU Ý (RICH TEXT) =================
+  const handleSaveLuuY = async () => {
+    setSavingLuuY(true);
     try {
-      if (editingLuuY) {
-        await danhmucApi.updateLuuY(editingLuuY.id, values);
-        showSuccessToast('Cập nhật mục lưu ý thành công!');
-      } else {
-        await danhmucApi.createLuuY(values);
-        showSuccessToast('Thêm mục lưu ý thành công!');
-      }
-      setIsLuuYModalOpen(false);
-      loadData();
+      await danhmucApi.updateLuuY(luuYHtml);
+      showSuccessToast('Đã lưu nội dung lưu ý thành công!');
     } catch (err: any) {
-      showErrorToast(err.response?.data?.message || 'Lỗi thao tác mục lưu ý');
+      showErrorToast(err.response?.data?.message || 'Lỗi khi lưu cấu hình lưu ý');
+    } finally {
+      setSavingLuuY(false);
     }
   };
 
-  const handleToggleLuuY = async (id: number) => {
-    try {
-      await danhmucApi.toggleLuuY(id);
-      showSuccessToast('Đã đổi trạng thái hiển thị!');
-      loadData();
-    } catch (err: any) {
-      showErrorToast(err.response?.data?.message || 'Lỗi khi cập nhật trạng thái');
-    }
+  const handleResetDefaultLuuY = () => {
+    const defaultHtml = "<p><strong>1. Hệ thống tiếp nhận các phản ánh, kiến nghị về:</strong></p>" +
+      "<ul>" +
+      "<li>Hành vi chậm trễ, gây phiền hà hoặc không thực hiện, thực hiện không đúng quy định trong giải quyết thủ tục hành chính;</li>" +
+      "<li>Cơ chế, chính sách, thủ tục hành chính không phù hợp với thực tế, không đồng bộ, không thống nhất hoặc không hợp pháp;</li>" +
+      "<li>Giải pháp, sáng kiến liên quan đến hoạt động sản xuất, kinh doanh và đời sống của người dân;</li>" +
+      "<li>Các trường hợp thực hiện không đúng Nghị quyết 68/NQ-CP và Quyết định 23/2021/QĐ-TTg.</li>" +
+      "</ul>" +
+      "<p><strong>2. Hệ thống không tiếp nhận đơn thư khiếu nại, tố cáo và hướng dẫn giải đáp pháp luật.</strong></p>";
+    setLuuYHtml(defaultHtml);
   };
 
-  const handleDeleteLuuY = async (id: number) => {
-    try {
-      await danhmucApi.deleteLuuY(id);
-      showSuccessToast('Xóa mục lưu ý thành công!');
-      loadData();
-    } catch (err: any) {
-      showErrorToast(err.response?.data?.message || 'Lỗi khi xóa mục lưu ý');
-    }
+  const quillModules = {
+    toolbar: [
+      [{ header: [1, 2, 3, false] }],
+      ['bold', 'italic', 'underline', 'strike'],
+      [{ color: [] }, { background: [] }],
+      [{ list: 'ordered' }, { list: 'bullet' }],
+      ['link', 'clean']
+    ]
   };
-
-  const luuYColumns = [
-    {
-      title: 'Thứ tự',
-      dataIndex: 'thuTu',
-      key: 'thuTu',
-      width: 80,
-      align: 'center' as const
-    },
-    {
-      title: 'Nội dung lưu ý',
-      dataIndex: 'noiDung',
-      key: 'noiDung',
-      render: (text: string, record: LuuYItem) => (
-        <Text strong={!record.parentId} style={{ color: record.isActive ? undefined : '#94a3b8' }}>
-          {text}
-        </Text>
-      )
-    },
-    {
-      title: 'Phân loại',
-      key: 'phanLoai',
-      width: 140,
-      align: 'center' as const,
-      render: (_: unknown, record: LuuYItem) => (
-        record.parentId ? (
-          <Tag color="cyan">Mục con</Tag>
-        ) : (
-          <Tag color="blue">Mục chính</Tag>
-        )
-      )
-    },
-    {
-      title: 'Hiển thị',
-      dataIndex: 'isActive',
-      key: 'isActive',
-      width: 100,
-      align: 'center' as const,
-      render: (_: unknown, record: LuuYItem) => (
-        <Switch
-          checked={record.isActive}
-          checkedChildren="Hiện"
-          unCheckedChildren="Ẩn"
-          onChange={() => handleToggleLuuY(record.id)}
-        />
-      )
-    },
-    {
-      title: 'Hành động',
-      key: 'action',
-      width: 150,
-      align: 'center' as const,
-      render: (_: unknown, record: LuuYItem) => (
-        <Space>
-          {!record.parentId && (
-            <Button
-              type="dashed"
-              size="small"
-              icon={<PlusOutlined />}
-              title="Thêm mục con"
-              onClick={() => handleOpenLuuYModal(undefined, record.id)}
-            />
-          )}
-          <Button icon={<EditOutlined />} size="small" onClick={() => handleOpenLuuYModal(record)} />
-          <Popconfirm
-            title="Bạn có chắc chắn muốn xóa mục này?"
-            description={!record.parentId && record.children && record.children.length > 0 ? "Các mục con trực thuộc cũng sẽ bị xóa!" : undefined}
-            onConfirm={() => handleDeleteLuuY(record.id)}
-          >
-            <Button icon={<DeleteOutlined />} size="small" danger />
-          </Popconfirm>
-        </Space>
-      )
-    }
-  ];
 
   const donViColumns = [
     {
@@ -479,25 +389,42 @@ export const AdminDanhMucPage: React.FC = () => {
               label: <span><InfoCircleOutlined /> Cấu hình Lưu ý & Hướng dẫn</span>,
               children: (
                 <div>
-                  <div style={{ marginBottom: 16, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                    <Text type="secondary">
-                      Các mục lưu ý này sẽ hiển thị trực tiếp ở thanh bên phải (Sidebar) của người dân khi gửi phản ánh.
-                    </Text>
-                    <Button type="primary" icon={<PlusOutlined />} onClick={() => handleOpenLuuYModal()}>
-                      Thêm mục lưu ý chính
-                    </Button>
-                  </div>
-                  <Table
-                    columns={luuYColumns}
-                    dataSource={luuYList}
-                    rowKey="id"
-                    loading={loading}
-                    pagination={false}
-                    expandable={{
-                      childrenColumnName: 'children',
-                      defaultExpandAllRows: true
-                    }}
-                  />
+                  <Row gutter={[24, 24]}>
+                    <Col xs={24} lg={15}>
+                      <Card
+                        title="Trình soạn thảo nội dung Lưu ý"
+                        extra={
+                          <Space>
+                            <Button icon={<UndoOutlined />} onClick={handleResetDefaultLuuY}>
+                              Mẫu mặc định
+                            </Button>
+                            <Button
+                              type="primary"
+                              icon={<SaveOutlined />}
+                              onClick={handleSaveLuuY}
+                              loading={savingLuuY}
+                              style={{ background: '#1e3a8a' }}
+                            >
+                              Lưu thay đổi
+                            </Button>
+                          </Space>
+                        }
+                      >
+                        <Text type="secondary" style={{ display: 'block', marginBottom: 12 }}>
+                          Bạn có thể định dạng in đậm, in nghiêng, đổi màu chữ (ví dụ bôi đỏ cảnh báo), gạch đầu dòng, đánh số hoặc chèn link trực tiếp như văn bản Word.
+                        </Text>
+                        <div style={{ minHeight: 320, marginBottom: 40 }}>
+                          <ReactQuill
+                            theme="snow"
+                            value={luuYHtml}
+                            onChange={setLuuYHtml}
+                            modules={quillModules}
+                            style={{ height: 260 }}
+                          />
+                        </div>
+                      </Card>
+                    </Col>
+                  </Row>
                 </div>
               )
             }
@@ -575,40 +502,6 @@ export const AdminDanhMucPage: React.FC = () => {
             rules={[{ required: true, message: 'Nhập số ngày giải quyết!' }]}
           >
             <InputNumber min={1} max={60} style={{ width: '100%' }} />
-          </Form.Item>
-        </Form>
-      </Modal>
-
-      {/* Modal Thêm/Sửa Lưu ý */}
-      <Modal
-        title={editingLuuY ? "Chỉnh sửa mục lưu ý" : "Thêm mục lưu ý mới"}
-        open={isLuuYModalOpen}
-        onCancel={() => setIsLuuYModalOpen(false)}
-        onOk={() => formLuuY.submit()}
-        width={600}
-      >
-        <Form form={formLuuY} layout="vertical" onFinish={handleSaveLuuY}>
-          <Form.Item name="parentId" label="Thuộc mục lưu ý cha (để trống nếu là mục chính số 1, 2...)">
-            <Select
-              allowClear
-              placeholder="Chọn mục cha hoặc để trống nếu là mục chính"
-              options={luuYList
-                .filter(item => !editingLuuY || item.id !== editingLuuY.id)
-                .map(item => ({ value: item.id, label: item.noiDung }))}
-            />
-          </Form.Item>
-          <Form.Item name="noiDung" label="Nội dung lưu ý" rules={[{ required: true, message: 'Nhập nội dung lưu ý!' }]}>
-            <TextArea rows={3} placeholder="Ví dụ: 1. Hệ thống tiếp nhận các phản ánh... hoặc Hành vi chậm trễ, gây phiền hà..." />
-          </Form.Item>
-          <Form.Item
-            name="thuTu"
-            label="Thứ tự hiển thị"
-            rules={[{ required: true, message: 'Nhập thứ tự hiển thị!' }]}
-          >
-            <InputNumber min={1} max={99} style={{ width: '100%' }} />
-          </Form.Item>
-          <Form.Item name="isActive" label="Trạng thái hiển thị" valuePropName="checked">
-            <Switch checkedChildren="Hiện" unCheckedChildren="Ẩn" />
           </Form.Item>
         </Form>
       </Modal>

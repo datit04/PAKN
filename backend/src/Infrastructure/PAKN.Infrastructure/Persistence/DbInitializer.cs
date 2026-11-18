@@ -7,7 +7,7 @@ namespace PAKN.Infrastructure.Persistence
     {
         public static async Task SeedAsync(ApplicationDbContext context)
         {
-            await SeedLuuYAsync(context);
+            await SeedCauHinhAsync(context);
 
             if (await context.TinhThanh.AnyAsync()) return;
 
@@ -127,73 +127,44 @@ namespace PAKN.Infrastructure.Persistence
             await context.SaveChangesAsync();
         }
 
-        private static async Task SeedLuuYAsync(ApplicationDbContext context)
+        private static async Task SeedCauHinhAsync(ApplicationDbContext context)
         {
-            // Tự động tạo bảng CauHinhLuuY nếu chưa tồn tại trong Database
+            // Tự động tạo bảng CauHinhHeThong nếu chưa tồn tại trong Database
             await context.Database.ExecuteSqlRawAsync(@"
-                IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'CauHinhLuuY')
+                IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'CauHinhHeThong')
                 BEGIN
-                    CREATE TABLE [CauHinhLuuY] (
-                        [Id] int NOT NULL IDENTITY(1,1),
-                        [NoiDung] nvarchar(1000) NOT NULL,
-                        [ParentId] int NULL,
-                        [ThuTu] int NOT NULL DEFAULT 1,
-                        [IsActive] bit NOT NULL DEFAULT 1,
-                        [CreatedAt] datetime2 NOT NULL DEFAULT GETUTCDATE(),
-                        CONSTRAINT [PK_CauHinhLuuY] PRIMARY KEY ([Id]),
-                        CONSTRAINT [FK_CauHinhLuuY_Parent] FOREIGN KEY ([ParentId]) REFERENCES [CauHinhLuuY] ([Id])
+                    CREATE TABLE [CauHinhHeThong] (
+                        [MaCauHinh] nvarchar(100) NOT NULL,
+                        [TenCauHinh] nvarchar(255) NULL,
+                        [GiaTri] nvarchar(max) NOT NULL,
+                        [UpdatedAt] datetime2 NOT NULL DEFAULT GETUTCDATE(),
+                        CONSTRAINT [PK_CauHinhHeThong] PRIMARY KEY ([MaCauHinh])
                     );
                 END
             ");
 
-            if (await context.CauHinhLuuY.AnyAsync()) return;
-
-            var muc1 = new CauHinhLuuY
+            var luuY = await context.CauHinhHeThong.FindAsync("LUU_Y_SIDEBAR");
+            if (luuY == null)
             {
-                NoiDung = "1. Hệ thống tiếp nhận các phản ánh, kiến nghị về:",
-                ThuTu = 1,
-                IsActive = true
-            };
-            context.CauHinhLuuY.Add(muc1);
-            await context.SaveChangesAsync();
+                var defaultHtml = "<p><strong>1. Hệ thống tiếp nhận các phản ánh, kiến nghị về:</strong></p>" +
+                                  "<ul>" +
+                                  "<li>Hành vi chậm trễ, gây phiền hà hoặc không thực hiện, thực hiện không đúng quy định trong giải quyết thủ tục hành chính;</li>" +
+                                  "<li>Cơ chế, chính sách, thủ tục hành chính không phù hợp với thực tế, không đồng bộ, không thống nhất hoặc không hợp pháp;</li>" +
+                                  "<li>Giải pháp, sáng kiến liên quan đến hoạt động sản xuất, kinh doanh và đời sống của người dân;</li>" +
+                                  "<li>Các trường hợp thực hiện không đúng Nghị quyết 68/NQ-CP và Quyết định 23/2021/QĐ-TTg.</li>" +
+                                  "</ul>" +
+                                  "<p><strong>2. Hệ thống không tiếp nhận đơn thư khiếu nại, tố cáo và hướng dẫn giải đáp pháp luật.</strong></p>";
 
-            context.CauHinhLuuY.AddRange(
-                new CauHinhLuuY
+                context.CauHinhHeThong.Add(new CauHinhHeThong
                 {
-                    NoiDung = "Hành vi chậm trễ, gây phiền hà hoặc không thực hiện, thực hiện không đúng quy định trong giải quyết thủ tục hành chính;",
-                    ParentId = muc1.Id,
-                    ThuTu = 1,
-                    IsActive = true
-                },
-                new CauHinhLuuY
-                {
-                    NoiDung = "Cơ chế, chính sách, thủ tục hành chính không phù hợp với thực tế, không đồng bộ, không thống nhất hoặc không hợp pháp;",
-                    ParentId = muc1.Id,
-                    ThuTu = 2,
-                    IsActive = true
-                },
-                new CauHinhLuuY
-                {
-                    NoiDung = "Giải pháp, sáng kiến liên quan đến hoạt động sản xuất, kinh doanh và đời sống của người dân;",
-                    ParentId = muc1.Id,
-                    ThuTu = 3,
-                    IsActive = true
-                },
-                new CauHinhLuuY
-                {
-                    NoiDung = "Các trường hợp thực hiện không đúng Nghị quyết 68/NQ-CP và Quyết định 23/2021/QĐ-TTg.",
-                    ParentId = muc1.Id,
-                    ThuTu = 4,
-                    IsActive = true
-                },
-                new CauHinhLuuY
-                {
-                    NoiDung = "2. Hệ thống không tiếp nhận đơn thư khiếu nại, tố cáo và hướng dẫn giải đáp pháp luật.",
-                    ThuTu = 2,
-                    IsActive = true
-                }
-            );
-            await context.SaveChangesAsync();
+                    MaCauHinh = "LUU_Y_SIDEBAR",
+                    TenCauHinh = "Nội dung lưu ý thanh bên (Sidebar)",
+                    GiaTri = defaultHtml,
+                    UpdatedAt = DateTime.UtcNow
+                });
+
+                await context.SaveChangesAsync();
+            }
         }
     }
 }

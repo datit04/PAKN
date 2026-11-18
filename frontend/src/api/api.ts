@@ -9,8 +9,7 @@ import {
   PaknCongKhaiItem,
   FileAttachment,
   TrangThaiPAKN,
-  ThongKeAdmin,
-  LuuYItem
+  ThongKeAdmin
 } from '../types';
 
 export const apiClient = axios.create({
@@ -99,25 +98,13 @@ export const danhmucApi = {
     return res.data;
   },
 
-  // CRUD Cấu hình Lưu ý
-  getLuuY: async (all = false): Promise<LuuYItem[]> => {
-    const res = await apiClient.get('/danhmuc/luu-y', { params: { all } });
+  // Cấu hình Lưu ý (Rich Text HTML)
+  getLuuY: async (): Promise<{ success: boolean; data: string }> => {
+    const res = await apiClient.get('/danhmuc/luu-y');
     return res.data;
   },
-  createLuuY: async (data: Partial<LuuYItem>) => {
-    const res = await apiClient.post('/danhmuc/luu-y', data);
-    return res.data;
-  },
-  updateLuuY: async (id: number, data: Partial<LuuYItem>) => {
-    const res = await apiClient.put(`/danhmuc/luu-y/${id}`, data);
-    return res.data;
-  },
-  toggleLuuY: async (id: number) => {
-    const res = await apiClient.patch(`/danhmuc/luu-y/${id}/toggle`);
-    return res.data;
-  },
-  deleteLuuY: async (id: number) => {
-    const res = await apiClient.delete(`/danhmuc/luu-y/${id}`);
+  updateLuuY: async (giaTri: string): Promise<{ success: boolean; message: string }> => {
+    const res = await apiClient.put('/danhmuc/luu-y', { giaTri });
     return res.data;
   }
 };

@@ -17,7 +17,7 @@ namespace PAKN.Application.Interfaces
         DbSet<PAKN_LichSuTrangThai> PAKN_LichSuTrangThai { get; }
         DbSet<PAKN_TraLoi> PAKN_TraLoi { get; }
         DbSet<PAKN_DanhGia> PAKN_DanhGia { get; }
-        DbSet<CauHinhLuuY> CauHinhLuuY { get; }
+        DbSet<CauHinhHeThong> CauHinhHeThong { get; }
 
         Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);
     }
