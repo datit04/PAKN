@@ -1,11 +1,15 @@
 
 stages:
   - build
+  - deploy
 
 variables:
   DOCKER_HOST: unix:///var/run/docker.sock
   DOCKER_TLS_CERTDIR: ""
 
+# =========================
+# BUILD FRONTEND
+# =========================
 build-frontend:
   stage: build
   image: docker:cli
@@ -19,6 +23,9 @@ build-frontend:
   rules:
     - if: '$CI_COMMIT_BRANCH == "master"'
 
+# =========================
+# BUILD BACKEND
+# =========================
 build-backend:
   stage: build
   image: docker:cli
@@ -29,5 +36,25 @@ build-backend:
     - echo "$CI_REGISTRY_PASSWORD" | docker login "$CI_REGISTRY" -u "$CI_REGISTRY_USER" --password-stdin
     - docker build -t "$CI_REGISTRY_IMAGE/backend:$CI_COMMIT_SHORT_SHA" -f backend/Dockerfile backend
     - docker push "$CI_REGISTRY_IMAGE/backend:$CI_COMMIT_SHORT_SHA"
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "master"'
+
+# =========================
+# DEPLOY FRONTEND TO K3D
+# =========================
+deploy-frontend:
+  stage: deploy
+  image: rancher/kubectl:v1.35.5
+  tags:
+    - pakn-docker
+  script:
+    - mkdir -p "$HOME/.kube"
+    - kubectl config set-cluster k3d --server="$KUBE_SERVER" --certificate-authority="$KUBE_CA_CERT" --embed-certs=true
+    - kubectl config set-credentials gitlab-cicd --token="$KUBE_TOKEN"
+    - kubectl config set-context k3d --cluster=k3d --user=gitlab-cicd --namespace=default
+    - kubectl config use-context k3d
+    - kubectl get deployment pakn-frontend -n default
+    - kubectl set image deployment/pakn-frontend pakn-frontend="$CI_REGISTRY_IMAGE/frontend:$CI_COMMIT_SHORT_SHA" -n default
+    - kubectl rollout status deployment/pakn-frontend -n default --timeout=180s
   rules:
     - if: '$CI_COMMIT_BRANCH == "master"'
